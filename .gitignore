@@ -6,3 +6,7 @@ auth.py
 log.txt
 
 player.png
+
+run.log
+
+__pycache__/
