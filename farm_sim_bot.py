@@ -1,13 +1,8 @@
 from discord.ext import commands
-from pynput.keyboard import Key, Controller
-import time
-import pyautogui
 import auth
-import boto3
 import actions
 
-keyboard = Controller()
-pyautogui.FAILSAFE = False
+
 bot = commands.Bot(command_prefix="!")
 
 

@@ -7,6 +7,7 @@ import datetime
 
 is_paused = False
 keyboard = Controller()
+pyautogui.FAILSAFE = False
 
 
 async def validate_user(ctx):
