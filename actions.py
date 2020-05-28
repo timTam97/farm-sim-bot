@@ -51,36 +51,38 @@ async def handle_pause(ctx):
 
 
 async def handle_players(ctx):
+    await ctx.trigger_typing()
+
+    # Grab screenshot
+    pyautogui.press("esc")
+    time.sleep(0.25)
+    pyautogui.click(x=506, y=28)
+    time.sleep(0.25)
+    pyautogui.screenshot("player.png", region=(93, 420, 259, 130))
+    pyautogui.press("esc")
+
     try:
-        await ctx.trigger_typing()
-
-        # Grab screenshot
-        pyautogui.press("esc")
-        time.sleep(0.25)
-        pyautogui.click(x=506, y=28)
-        time.sleep(0.25)
-        pyautogui.screenshot("player.png", region=(93, 420, 259, 130))
-        pyautogui.press("esc")
-
         # AWS magic
-        to_send = ""
-        aws_client = boto3.client("rekognition")
-        with open("player.png", "rb") as image:
-            response = aws_client.detect_text(Image={"Bytes": image.read()})
-        for texts in response.get("TextDetections"):
-            if texts.get("Type") == "LINE":
-                to_send += texts["DetectedText"]
-                to_send += "\n"
-
-        # Nicer 0 player messages
-        if to_send != "Players:\n":
-            await ctx.send(to_send)
-        elif to_send == "Players:\n":
+        player_text = "Players:\n"  # grab_text("player.png")
+        if player_text == "Players:\n":  # Nicer 0 player messages
             await ctx.send("Players: 0")
-        # await ctx.send("mouse at " + str(pyautogui.position()[0]) + " " + str(pyautogui.position()[1]))
+            return
+        await ctx.send(player_text)
     except Exception as e:
         await ctx.send("Error. Something bad happened")
         await write_log(e)
+
+
+def grab_text(file_name):
+    to_send = ""
+    aws_client = boto3.client("rekognition")
+    with open(file_name, "rb") as image:
+        response = aws_client.detect_text(Image={"Bytes": image.read()})
+    for texts in response.get("TextDetections"):
+        if texts.get("Type") == "LINE":
+            to_send += texts["DetectedText"]
+            to_send += "\n"
+    return to_send
 
 
 async def handle_esc(ctx):
