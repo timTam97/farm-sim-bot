@@ -1,4 +1,3 @@
-from pynput.keyboard import Key, Controller
 import time
 import pyautogui
 import auth
@@ -6,7 +5,6 @@ import boto3
 import datetime
 
 is_paused = False
-keyboard = Controller()
 pyautogui.FAILSAFE = False
 
 
@@ -33,16 +31,9 @@ async def handle_timescale(ctx, scale):
         )
         return
     if scale != "120":
-        for _ in range(5):
-            keyboard.press("7")
-            time.sleep(0.1)
-            keyboard.release("7")
-            time.sleep(0.1)
+        pyautogui.press("7", presses=5, interval=0.2)
     for _ in range(key_press):
-        keyboard.press("8")
-        time.sleep(0.1)
-        keyboard.release("8")
-        time.sleep(0.1)
+        pyautogui.press("7", presses=key_press, interval=0.2)
     await ctx.send("Timescale set to " + scale + " 🚜")
 
 
@@ -51,15 +42,11 @@ async def handle_pause(ctx):
     await ctx.trigger_typing()
     if is_paused:
         is_paused = False
-        keyboard.press(".")
-        time.sleep(0.1)
-        keyboard.release(".")
+        pyautogui.press(".")
         await ctx.send("Game is now unpaused.")
     elif not is_paused:
         is_paused = True
-        keyboard.press(".")
-        time.sleep(0.1)
-        keyboard.release(".")
+        pyautogui.press(".")
         await ctx.send("Game is now paused.")
 
 
@@ -68,18 +55,12 @@ async def handle_players(ctx):
         await ctx.trigger_typing()
 
         # Grab screenshot
-        keyboard.press(Key.esc)
-        time.sleep(0.1)
-        keyboard.release(Key.esc)
+        pyautogui.press("esc")
         time.sleep(0.25)
-        pyautogui.moveTo(x=506, y=28)
-        pyautogui.click()
+        pyautogui.click(x=506, y=28)
         time.sleep(0.25)
         pyautogui.screenshot("player.png", region=(93, 420, 259, 130))
-        keyboard.press(Key.esc)
-        time.sleep(0.1)
-        keyboard.release(Key.esc)
-        # await ctx.send("", file=discord.File("player.png"))
+        pyautogui.press("esc")
 
         # AWS magic
         to_send = ""
@@ -106,9 +87,7 @@ async def handle_esc(ctx):
     if ctx.author.display_name != auth.ADMIN:
         await ctx.send("Admin only command.")
         return
-    keyboard.press(Key.esc)
-    time.sleep(0.1)
-    keyboard.release(Key.esc)
+    pyautogui.press("esc")
     await ctx.message.add_reaction("🚜")
 
 
