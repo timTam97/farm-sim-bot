@@ -32,8 +32,7 @@ async def handle_timescale(ctx, scale):
         return
     if scale != "120":
         pyautogui.press("7", presses=5, interval=0.2)
-    for _ in range(key_press):
-        pyautogui.press("7", presses=key_press, interval=0.2)
+    pyautogui.press("8", presses=key_press, interval=0.2)
     await ctx.send("Timescale set to " + scale + " 🚜")
 
 
