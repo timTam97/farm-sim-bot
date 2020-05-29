@@ -1,9 +1,13 @@
 from discord.ext import commands
-import auth
 import actions
-
+import auth
 
 bot = commands.Bot(command_prefix="!")
+
+
+@bot.event
+async def on_ready():
+    print("Logged in as {0.user}".format(bot))
 
 
 @bot.command()
@@ -30,7 +34,7 @@ async def esc(ctx):
 
 
 def main():
-    bot.run(auth.get_token())
+    bot.run(auth.TOKEN)
 
 
 if __name__ == "__main__":

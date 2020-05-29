@@ -1,10 +1,10 @@
+import datetime
 import time
+import boto3
 import pyautogui
 import auth
-import boto3
-import datetime
 
-is_paused = False
+_paused = False
 pyautogui.FAILSAFE = False
 
 
@@ -20,14 +20,15 @@ async def validate_user(ctx):
 
 
 async def handle_timescale(ctx, scale):
-    # 1, 5, 15, 30, 60, 120
     await ctx.trigger_typing()
     ts_map = {"1": 0, "5": 1, "15": 2, "30": 3, "60": 4, "120": 5}
     key_press = ts_map.get(scale)
-
     if key_press is None:
         await ctx.send(
-            "The timescale you typed is invalid. Valid timescales: 1, 5, 15, 30, 60, 120"
+            (
+                "The timescale you typed is invalid. "
+                "Valid timescales: 1, 5, 15, 30, 60, 120"
+            )
         )
         return
     if scale != "120":
@@ -37,14 +38,14 @@ async def handle_timescale(ctx, scale):
 
 
 async def handle_pause(ctx):
-    global is_paused
+    global _paused
     await ctx.trigger_typing()
-    if is_paused:
-        is_paused = False
+    if _paused:
+        _paused = False
         pyautogui.press(".")
         await ctx.send("Game is now unpaused.")
-    elif not is_paused:
-        is_paused = True
+    elif not _paused:
+        _paused = True
         pyautogui.press(".")
         await ctx.send("Game is now paused.")
 
@@ -62,7 +63,7 @@ async def handle_players(ctx):
 
     try:
         # AWS magic
-        player_text = "Players:\n"  # grab_text("player.png")
+        player_text = grab_text("player.png")
         if player_text == "Players:\n":  # Nicer 0 player messages
             await ctx.send("Players: 0")
             return
@@ -74,9 +75,9 @@ async def handle_players(ctx):
 
 def grab_text(file_name):
     to_send = ""
-    aws_client = boto3.client("rekognition")
+    aws = boto3.client("rekognition")
     with open(file_name, "rb") as image:
-        response = aws_client.detect_text(Image={"Bytes": image.read()})
+        response = aws.detect_text(Image={"Bytes": image.read()})
     for texts in response.get("TextDetections"):
         if texts.get("Type") == "LINE":
             to_send += texts["DetectedText"]
