@@ -10,3 +10,7 @@ player.png
 run.log
 
 __pycache__/
+
+*.jpg
+
+*.png
