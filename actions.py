@@ -74,15 +74,15 @@ async def handle_players(ctx):
 
 
 def grab_text(file_name):
-    to_send = ""
+    to_send = []
     aws = boto3.client("rekognition")
     with open(file_name, "rb") as image:
         response = aws.detect_text(Image={"Bytes": image.read()})
     for texts in response.get("TextDetections"):
         if texts.get("Type") == "LINE":
-            to_send += texts["DetectedText"]
-            to_send += "\n"
-    return to_send
+            to_send.append(texts["DetectedText"])
+            to_send.append("\n")
+    return "".join(to_send)
 
 
 async def handle_esc(ctx):
